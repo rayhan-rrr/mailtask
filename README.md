@@ -13,7 +13,7 @@ Project Requirement:
 - Incoming mails should be viewed from a page/dashboard
 - User can send response/reply to a mail from the system and and email will be sent to the incoming mail sender.
 
-## Project Targer
+## Project Target
 
 - Need to handle/track incoming mails to particular mailboxs.
 - Need to read the incoming mail's data and store them to database
