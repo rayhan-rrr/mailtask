@@ -4,6 +4,12 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 
+use Illuminate\Support\Facades\Log;
+use PhpMimeMailParser\Parser;
+
+use App\IncomingMail;
+
+
 class HandleIncomingMails extends Command
 {
     /**
@@ -37,45 +43,39 @@ class HandleIncomingMails extends Command
      */
     public function handle()
     {
+        error_reporting(1);
+        Log::info("Got request at: ". date("H:i:s"));
+        
         // get mail via stdin
-        $email = file_get_contents("php://stdin");
+        $parser = new Parser();
+        $parser->setStream(fopen("php://stdin", "r"));
 
-        // handle the incoming email data
-        $lines = explode("\n", $email);
+        $arrayHeaderTo = $parser->getAddresses('to');
+        // return [["display"=>"test", "address"=>"test@example.com", false]]
 
-        // set empty vars and explode message to variables
-        $from = "";
-        $subject = "";
-        $to = "";
-        $headers = "";
-        $message = "";
-        $splittingHeaders = true;
-        for ($i=0; $i < count($lines); $i++) {
-            if ($splittingHeaders) {
-                // this is a header
-                $headers .= $lines[$i]."\n";
+        $arrayHeaderFrom = $parser->getAddresses('from');
+        // return [["display"=>"test", "address"=>"test@example.com", "is_group"=>false]]
 
-                // look out for special headers
-                if (preg_match("/^Subject: (.*)/", $lines[$i], $matches)) {
-                    $subject = $matches[1];
-                }
-                if (preg_match("/^From: (.*)/", $lines[$i], $matches)) {
-                    $from = $matches[1];
-                }
-                if (preg_match("/^To: (.*)/", $lines[$i], $matches)) {
-                    $to = $matches[1];
-                }
-            } else {
-                // not a header, but message
-                $message .= $lines[$i]."\n";
-            }
+        $subject = $parser->getHeader('subject');
 
-            if (trim($lines[$i])=="") {
-                // empty line, header section has ended
-                $splittingHeaders = false;
-            }
-        }
+        $text = $parser->getMessageBody('html');
+        
+        
+        //insert data to mysql database
 
+        IncomingMail::create([
 
+            'from_mail' => $arrayHeaderFrom[0]['address'],
+            'from_name' => $arrayHeaderFrom[0]['display'],
+            'to_mail'   => $arrayHeaderTo[0]['address'],
+            'to_name'   => $arrayHeaderTo[0]['display'],
+            'subject'   => $subject,
+            'body'      => $text,
+            'active'    => 1,
+        ]);
+
+        //insertion complete
+
+        
     }
 }
