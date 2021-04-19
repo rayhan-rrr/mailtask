@@ -21,6 +21,7 @@ class CreateIncomingMailsTable extends Migration
             $table->string('to_name', 100);
             $table->string('subject', 255);
             $table->longText('body');
+            $table->boolean('read');
             $table->boolean('active');
             $table->timestamps();
         });

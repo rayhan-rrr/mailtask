@@ -15,6 +15,7 @@ class IncomingMail extends Model
         'to_name',
         'subject',
         'body',
+        'is_read',
         'active'
 
     ];

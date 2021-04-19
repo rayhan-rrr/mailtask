@@ -13,6 +13,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+//homepage
+Route::get('/', 'HomeController@index')->name('home');
+
+//load email's data
+Route::post('/load-mail', 'MailController@loadMail')->name('load-mail');
+
+//process mail response message
+Route::post('/mail-response', 'MailController@mailResponse')->name('mail-response');

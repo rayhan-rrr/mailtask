@@ -43,10 +43,8 @@ class HandleIncomingMails extends Command
      */
     public function handle()
     {
-        error_reporting(1);
-        Log::info("Got request at: ". date("H:i:s"));
         
-        // get mail via stdin
+        // get email via stdin
         $parser = new Parser();
         $parser->setStream(fopen("php://stdin", "r"));
 
@@ -58,7 +56,7 @@ class HandleIncomingMails extends Command
 
         $subject = $parser->getHeader('subject');
 
-        $text = $parser->getMessageBody('html');
+        $emailBody = $parser->getMessageBody('html');
         
         
         //insert data to mysql database
@@ -70,12 +68,14 @@ class HandleIncomingMails extends Command
             'to_mail'   => $arrayHeaderTo[0]['address'],
             'to_name'   => $arrayHeaderTo[0]['display'],
             'subject'   => $subject,
-            'body'      => $text,
+            'body'      => $emailBody,
+            'is_read'   => 0,
             'active'    => 1,
         ]);
 
         //insertion complete
 
+        return 0;
         
     }
 }
