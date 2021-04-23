@@ -68,7 +68,7 @@ System Homepage
 
         <div class="mail-list mailItem {{ ($key==0)? 'active_mail' : '' }}" id="{{ $mail->id }}">
           <div class="content">
-            <p class="sender-name">{{ $mail->from_name }}</p>
+            <p class="sender-name-left">{{ $mail->from_name }}</p>
             <p class="message_text">{{ $mail->subject }}</p>
           </div>
           <div class="details">
